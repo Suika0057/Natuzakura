@@ -1,4 +1,36 @@
-<script setup></script>
+<script setup>
+import { onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { locale } = useI18n();
+
+onMounted(() => {
+    locale.value = 'zhCH';
+});
+
+const showLangDropdown = ref(false);
+const langBarText = ref('ZH');
+
+const toggleLangDropdown = () => {
+  showLangDropdown.value = !showLangDropdown.value;
+};
+
+// 语言切换
+const selectLanguage = (lang) => {
+  showLangDropdown.value = false;
+  locale.value = lang;
+  toggleLangDropdown();
+  if (lang === 'en') {
+    langBarText.value = 'EN';
+  } else if (lang === 'ja') {
+    langBarText.value = 'JA';
+  } else if (lang === 'zhCH') {
+    langBarText.value = 'ZH';
+  } else if (lang === 'zhTW') {
+    langBarText.value = 'ZHTW';
+  }
+};
+</script>
 
 <template>
     <div class="app-bar">
@@ -6,26 +38,32 @@
             <div class="box">
                 <div class="contents">
                     <img src="../../assets/imgs/natuzakura.jpeg" alt="logo" />
-                    <span>NATSUZAKURA</span>
+                    <span>{{ $t('messages.index.title') }}</span>
                 </div>
             </div>
         </div>
 
         <div class="right-part">
             <ul class="nav-list">
-                <router-link :to="{ name: 'Home' }" class="nav-item">TOP</router-link>
-                <li class="nav-item">LIVE</li>
-                <li class="nav-item">ABOUT</li>
-                <li class="nav-item">PHOTO</li>
-                <li class="nav-item">PROFILE</li>
-                <li class="nav-item">EVENTS</li>
-                <li class="nav-item">VIDEOS</li>
-                <li class="nav-item">MUSIC</li>
-                <li class="nav-item">SPECIAL</li>
+                <router-link :to="{ name: 'Home' }" class="nav-item">{{ $t('messages.app_bar.item_top') }}</router-link>
+                <li class="nav-item">{{ $t('messages.app_bar.item_live') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_about') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_photo') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_profile') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_events') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_videos') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_music') }}</li>
+                <li class="nav-item">{{ $t('messages.app_bar.item_special') }}</li>
 
-                <li class="lang-switch">
+                <li class="lang-switch" @click="toggleLangDropdown">
                     <span class="icon">🌐</span>
-                    <span class="label">EN</span>
+                    <span class="label">{{ langBarText }}</span>
+                    <ul class="lang-dropdown" v-show="showLangDropdown">
+                        <li class="lang-item" @click="selectLanguage('en')">English</li>
+                        <li class="lang-item" @click="selectLanguage('ja')">日本語</li>
+                        <li class="lang-item" @click="selectLanguage('zhCH')">简体中文</li>
+                        <li class="lang-item" @click="selectLanguage('zhTW')">繁体中文</li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -109,6 +147,7 @@
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
+    position: relative;
 }
 
 .lang-switch .icon {
@@ -131,5 +170,45 @@
     color: #00aeea;
     font-weight: bold;
     border-bottom: 2px solid #00aeea;
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    min-width: 120px;
+    z-index: 1001;
+    padding: 8px 0;
+    margin-top: 8px;
+    list-style: none;
+}
+
+.lang-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #007fc9;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+}
+
+.lang-item:hover {
+    background-color: rgba(0, 127, 201, 0.1);
+    color: #00aeea;
+}
+
+.lang-item:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.lang-item:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 </style>
